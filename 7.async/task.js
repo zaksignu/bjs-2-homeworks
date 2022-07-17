@@ -4,6 +4,9 @@ class AlarmClock{
         this.id = 0;  
         this.timerId = null;
         this.tickPeriod = 10000;
+        this.firstClock = 0;
+        this.secondClock = 1;
+        this.thirdClock = 2;
     }
 
     addClock(date, funct, id) {
@@ -19,7 +22,7 @@ class AlarmClock{
 
     getCurrentFormattedTime(){
         let dt = new Date();
-        return dt.getHours()+":"+dt.getMinutes();
+        return dt.toLocaleTimeString('ru-Ru',{hour: "2-digit",timeZone:"Europe/Moscow"})+":"+dt.toLocaleTimeString('ru-Ru',{minute: "2-digit",timeZone:"Europe/Moscow"});
     }
 
     removeClock(id){
@@ -43,11 +46,11 @@ class AlarmClock{
 
     getCurrentFormattedTimePlus(numb){
         let dt = new Date();
-        let newMin = dt.getMinutes()+numb;
-        return dt.getHours()+":"+newMin;
+        let newMin =cleanTime( dt.getMinutes()+numb);
+        return cleanTime(dt.getHours())+":"+newMin;
     }
 
-    clearAlarms(){
+      clearAlarms(){
         if (this.timerId !== null){
         clearInterval(this.timerId);
         }
@@ -64,6 +67,15 @@ class AlarmClock{
 
 }
 
+
+function cleanTime(time){
+    if (time<9){
+        return "0"+time;
+    }else {
+        return time;
+    }
+}
+
 function checkclock(ob){
        let formattedDate = ob.getCurrentFormattedTime()
        let alarms = ob.alarmCollection.filter((item) => item[0] === formattedDate);
@@ -71,9 +83,9 @@ function checkclock(ob){
 }
 
 let tick = new AlarmClock;
-let firstTime = tick.getCurrentFormattedTime(0);
-let secondTime = tick.getCurrentFormattedTimePlus(1);
-let thirdTime = tick.getCurrentFormattedTimePlus(2);
+let firstTime = tick.getCurrentFormattedTime(tick.firstClock);
+let secondTime = tick.getCurrentFormattedTimePlus(tick.secondClock);
+let thirdTime = tick.getCurrentFormattedTimePlus(tick.thirdClock);
 
 tick.addClock(firstTime,function() {
     console.log("timer_callback_1");},1);
